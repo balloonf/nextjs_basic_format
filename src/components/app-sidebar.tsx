@@ -59,6 +59,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { useNavigation } from "./providers/context/navigation-context";
 
 // This is sample data.
 const data = {
@@ -192,6 +193,15 @@ const data = {
 
 export function AppSidebar({ children }: { children: React.ReactNode }) {
   const [activeTeam, setActiveTeam] = React.useState(data.teams[0]);
+  const { setActiveMainItem, setActiveSubItem } = useNavigation();
+  
+  // Set initial active item on component mount
+  React.useEffect(() => {
+    const initialActiveItem = data.navMain.find(item => item.isActive);
+    if (initialActiveItem) {
+      setActiveMainItem(initialActiveItem);
+    }
+  }, [setActiveMainItem]);
 
   return (
     <>
@@ -268,7 +278,13 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={item.title}>
+                      <SidebarMenuButton 
+                        tooltip={item.title}
+                        onClick={() => {
+                          setActiveMainItem(item);
+                          setActiveSubItem(null);
+                        }}
+                      >
                         {item.icon && <item.icon />}
                         <span>{item.title}</span>
                         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -278,7 +294,13 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                       <SidebarMenuSub>
                         {item.items?.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton asChild>
+                            <SidebarMenuSubButton 
+                              asChild
+                              onClick={() => {
+                                setActiveMainItem(item);
+                                setActiveSubItem(subItem);
+                              }}
+                            >
                               <a href={subItem.url}>
                                 <span>{subItem.title}</span>
                               </a>
