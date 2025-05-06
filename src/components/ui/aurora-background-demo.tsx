@@ -9,7 +9,7 @@ export function AuroraBackgroundDemo() {
   const router = useRouter();
   
   const handleDebugClick = () => {
-    router.push("/main");
+    router.push("/login");
   };
   
   return (
