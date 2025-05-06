@@ -94,15 +94,15 @@ const data = {
       items: [
         {
           title: "History",
-          url: "#",
+          url: "sample",
         },
         {
           title: "Starred",
-          url: "#",
+          url: "starred",
         },
         {
           title: "Settings",
-          url: "#",
+          url: "playground-settings",
         },
       ],
     },
@@ -113,15 +113,15 @@ const data = {
       items: [
         {
           title: "Genesis",
-          url: "#",
+          url: "genesis",
         },
         {
           title: "Explorer",
-          url: "#",
+          url: "explorer",
         },
         {
           title: "Quantum",
-          url: "#",
+          url: "quantum",
         },
       ],
     },
@@ -132,19 +132,19 @@ const data = {
       items: [
         {
           title: "Introduction",
-          url: "#",
+          url: "intro",
         },
         {
           title: "Get Started",
-          url: "#",
+          url: "get-started",
         },
         {
           title: "Tutorials",
-          url: "#",
+          url: "tutorials",
         },
         {
           title: "Changelog",
-          url: "#",
+          url: "changelog",
         },
       ],
     },
@@ -155,19 +155,19 @@ const data = {
       items: [
         {
           title: "General",
-          url: "#",
+          url: "general-settings",
         },
         {
           title: "Team",
-          url: "#",
+          url: "team-settings",
         },
         {
           title: "Billing",
-          url: "#",
+          url: "billing",
         },
         {
           title: "Limits",
-          url: "#",
+          url: "limits",
         },
       ],
     },
@@ -295,15 +295,12 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                         {item.items?.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton 
-                              asChild
                               onClick={() => {
                                 setActiveMainItem(item);
                                 setActiveSubItem(subItem);
                               }}
                             >
-                              <a href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </a>
+                              <span>{subItem.title}</span>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))}
