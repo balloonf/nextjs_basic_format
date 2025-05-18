@@ -1,4 +1,3 @@
-import { ThemeProvider } from "next-themes";
 import { cookies } from "next/headers";
 import { SidebarProvider } from "../ui/sidebar";
 import { AppSidebar } from "../app-sidebar";
@@ -23,19 +22,12 @@ export async function Providers({ children }: ProviderProps) {
   }
 
   return (
-    <ThemeProvider
-      enableSystem
-      attribute="class"
-      defaultTheme="dark"
-      disableTransitionOnChange
-    >
-      <ClientProviders>
-        <SidebarProvider defaultOpen={defaultOpen}>
-          <AppSidebar>
-            <AppSidebarInset>{children}</AppSidebarInset>
-          </AppSidebar>
-        </SidebarProvider>
-      </ClientProviders>
-    </ThemeProvider>
+    <ClientProviders>
+      <SidebarProvider defaultOpen={defaultOpen}>
+        <AppSidebar>
+          <AppSidebarInset>{children}</AppSidebarInset>
+        </AppSidebar>
+      </SidebarProvider>
+    </ClientProviders>
   );
 }

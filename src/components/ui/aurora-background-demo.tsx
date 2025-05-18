@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
+import { TypingAnimation, MultipleTypingAnimation } from "@/components/typing-animation";
 
 export function AuroraBackgroundDemo() {
   const router = useRouter();
@@ -45,11 +46,18 @@ export function AuroraBackgroundDemo() {
         }}
         className="relative z-10 flex flex-col gap-4 items-center justify-center min-h-screen px-4"
       >
-        <div className="text-3xl md:text-7xl font-bold dark:text-white text-center">
-          Background lights are cool you know.
+        <div className="text-3xl md:text-7xl font-bold dark:text-white text-center h-24">
+          <TypingAnimation 
+            text="Background lights are cool you know." 
+            speed={80} 
+          />
         </div>
-        <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 py-4">
-          And this, is chemical burn.
+        <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 py-4 h-16 mt-6">
+          <TypingAnimation 
+            text="And this, is chemical burn." 
+            speed={100} 
+            delay={3000} 
+          />
         </div>
         <InteractiveHoverButton 
           text="Debug now" 
