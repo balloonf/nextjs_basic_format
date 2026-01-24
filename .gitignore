@@ -151,6 +151,14 @@ dist
 # vitepress cache directory
 **/.vitepress/cache
 
+# Playwright
+playwright-report/
+test-results/
+.playwright-mcp/
+
+# Misc
+nul
+
 # Docusaurus cache and generated files
 .docusaurus
 
