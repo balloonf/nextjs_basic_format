@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
-import { TypingAnimation, MultipleTypingAnimation } from "@/components/typing-animation";
+import { TypingAnimation } from "@/components/typing-animation";
 
 export function AuroraBackgroundDemo() {
   const router = useRouter();

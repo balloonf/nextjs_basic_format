@@ -10,11 +10,28 @@ const SamplePage = dynamic(() => import('@/app/sample/page'), {
   ssr: false
 });
 
+// 권한 관리 컴포넌트들을 동적으로 불러오기
+const PermissionManagement = dynamic(() => import('@/app/permissions/permission-management'), {
+  loading: () => <div>로딩중...</div>,
+  ssr: false
+});
+
+const UserManagement = dynamic(() => import('@/app/permissions/user-management'), {
+  loading: () => <div>로딩중...</div>,
+  ssr: false
+});
+
 // 동적 컴포넌트 로딩을 위한 매핑 객체
 const componentMap: Record<string, React.ComponentType> = {
   // Playground 하위 메뉴
   "history": History,
   "sample": SamplePage,
+  
+  // 권한 관리 하위 메뉴
+  "permission-management": PermissionManagement,
+  "user-management": UserManagement,
+  "role-settings": () => <PermissionManagement />,
+  
   // 다른 컴포넌트들은 필요에 따라 추가
 };
 

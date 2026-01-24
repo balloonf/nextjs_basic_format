@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 10\")",
+      "Bash(npm install:*)",
+      "Bash(npx playwright install:*)",
+      "Bash(npx playwright test:*)",
+      "mcp__supabase-community-supabase-mcp__list_projects",
+      "mcp__supabase-community-supabase-mcp__list_organizations",
+      "Bash(powershell -Command \"echo $env:APPDATA\")",
+      "Bash(powershell -Command \"[Environment]::GetFolderPath\\(''ApplicationData''\\)\")",
+      "Bash(powershell -Command \"Test-Path ''C:\\\\Users\\\\ballf\\\\AppData\\\\Roaming\\\\Claude''\")",
+      "Bash(powershell -Command:*)",
+      "Bash(npx @supabase/mcp-server-supabase --help)"
+    ]
+  },
+  "enabledPlugins": {
+    "everything-claude-code@everything-claude-code": true,
+    "playwright@claude-plugins-official": true,
+    "supabase@claude-plugins-official": true
+  }
+}

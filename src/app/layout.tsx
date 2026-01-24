@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeProviderWrapper } from "@/components/theme-provider-wrapper";
+import { AuthProvider } from "@/components/providers/context/auth-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,7 +17,9 @@ export default function RootLayout({
     <html lang="kr" suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProviderWrapper>
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </ThemeProviderWrapper>
       </body>
     </html>

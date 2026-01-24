@@ -12,8 +12,8 @@ export async function Providers({ children }: ProviderProps) {
   const cookieStore = await cookies();
 
   const sidebarState = cookieStore.get("sidebar:state")?.value;
-  //* get sidebar width from cookie
-  const sidebarWidth = cookieStore.get("sidebar:width")?.value;
+  // Sidebar width from cookie (reserved for future use)
+  // const sidebarWidth = cookieStore.get("sidebar:width")?.value;
 
   let defaultOpen = true;
 

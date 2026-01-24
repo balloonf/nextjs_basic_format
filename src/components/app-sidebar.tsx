@@ -1,38 +1,30 @@
-"use client";
+"use client"
 
-import * as React from "react";
+import * as React from "react"
 import {
-  AudioWaveform,
   BadgeCheck,
   Bell,
-  BookOpen,
-  Bot,
   ChevronRight,
   ChevronsUpDown,
-  Command,
   CreditCard,
   Folder,
   Forward,
-  Frame,
-  GalleryVerticalEnd,
   LogOut,
-  Map,
   MoreHorizontal,
-  PieChart,
   Plus,
-  Settings2,
   Sparkles,
-  SquareTerminal,
   Trash2,
-} from "lucide-react";
+} from "lucide-react"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/components/providers/context/auth-context"
+import { UserAvatarButton, UserAvatarInfo } from "@/components/sidebar/user-avatar-button"
+import { DEFAULT_TEAMS, NAV_MAIN_ITEMS, NAV_PROJECTS } from "@/constants/navigation"
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+} from "@/components/ui/collapsible"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,7 +34,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
 import {
   Sidebar,
   SidebarContent,
@@ -58,150 +50,21 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
-import { useNavigation } from "./providers/context/navigation-context";
-
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "sample",
-        },
-        {
-          title: "Starred",
-          url: "starred",
-        },
-        {
-          title: "Settings",
-          url: "playground-settings",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "genesis",
-        },
-        {
-          title: "Explorer",
-          url: "explorer",
-        },
-        {
-          title: "Quantum",
-          url: "quantum",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "intro",
-        },
-        {
-          title: "Get Started",
-          url: "get-started",
-        },
-        {
-          title: "Tutorials",
-          url: "tutorials",
-        },
-        {
-          title: "Changelog",
-          url: "changelog",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "general-settings",
-        },
-        {
-          title: "Team",
-          url: "team-settings",
-        },
-        {
-          title: "Billing",
-          url: "billing",
-        },
-        {
-          title: "Limits",
-          url: "limits",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-};
+} from "@/components/ui/sidebar"
+import { useNavigation } from "./providers/context/navigation-context"
 
 export function AppSidebar({ children }: { children: React.ReactNode }) {
-  const [activeTeam, setActiveTeam] = React.useState(data.teams[0]);
-  const { setActiveMainItem, setActiveSubItem } = useNavigation();
-  
+  const [activeTeam, setActiveTeam] = React.useState(DEFAULT_TEAMS[0])
+  const { setActiveMainItem, setActiveSubItem } = useNavigation()
+  const { user, signOut } = useAuth()
+
   // Set initial active item on component mount
   React.useEffect(() => {
-    const initialActiveItem = data.navMain.find(item => item.isActive);
+    const initialActiveItem = NAV_MAIN_ITEMS.find(item => item.isActive)
     if (initialActiveItem) {
-      setActiveMainItem(initialActiveItem);
+      setActiveMainItem(initialActiveItem)
     }
-  }, [setActiveMainItem]);
+  }, [setActiveMainItem])
 
   return (
     <>
@@ -238,7 +101,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                   <DropdownMenuLabel className="text-xs text-muted-foreground">
                     Teams
                   </DropdownMenuLabel>
-                  {data.teams.map((team, index) => (
+                  {DEFAULT_TEAMS.map((team, index) => (
                     <DropdownMenuItem
                       key={team.name}
                       onClick={() => setActiveTeam(team)}
@@ -269,7 +132,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
           <SidebarGroup>
             <SidebarGroupLabel>Platform</SidebarGroupLabel>
             <SidebarMenu>
-              {data.navMain.map((item) => (
+              {NAV_MAIN_ITEMS.map((item) => (
                 <Collapsible
                   key={item.title}
                   asChild
@@ -278,11 +141,11 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                      <SidebarMenuButton 
+                      <SidebarMenuButton
                         tooltip={item.title}
                         onClick={() => {
-                          setActiveMainItem(item);
-                          setActiveSubItem(null);
+                          setActiveMainItem(item)
+                          setActiveSubItem(null)
                         }}
                       >
                         {item.icon && <item.icon />}
@@ -294,10 +157,10 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                       <SidebarMenuSub>
                         {item.items?.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton 
+                            <SidebarMenuSubButton
                               onClick={() => {
-                                setActiveMainItem(item);
-                                setActiveSubItem(subItem);
+                                setActiveMainItem(item)
+                                setActiveSubItem(subItem)
                               }}
                             >
                               <span>{subItem.title}</span>
@@ -314,7 +177,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
           <SidebarGroup className="group-data-[collapsible=icon]:hidden">
             <SidebarGroupLabel>Projects</SidebarGroupLabel>
             <SidebarMenu>
-              {data.projects.map((item) => (
+              {NAV_PROJECTS.map((item) => (
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
@@ -369,22 +232,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                     size="lg"
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                   >
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
-                        src={data.user.avatar}
-                        alt={data.user.name}
-                      />
-                      <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                    </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">
-                        {data.user.name}
-                      </span>
-                      <span className="truncate text-xs">
-                        {data.user.email}
-                      </span>
-                    </div>
-                    <ChevronsUpDown className="ml-auto size-4" />
+                    <UserAvatarButton user={user} className="flex items-center gap-2 w-full" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
@@ -394,52 +242,34 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                   sideOffset={4}
                 >
                   <DropdownMenuLabel className="p-0 font-normal">
-                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                      <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage
-                          src={data.user.avatar}
-                          alt={data.user.name}
-                        />
-                        <AvatarFallback className="rounded-lg">
-                          CN
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">
-                          {data.user.name}
-                        </span>
-                        <span className="truncate text-xs">
-                          {data.user.email}
-                        </span>
-                      </div>
-                    </div>
+                    <UserAvatarInfo user={user} />
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuItem>
                       <Sparkles />
-                      Upgrade to Pro
+                      프로 업그레이드
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuItem>
                       <BadgeCheck />
-                      Account
+                      계정
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <CreditCard />
-                      Billing
+                      결제
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <Bell />
-                      Notifications
+                      알림
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => signOut()}>
                     <LogOut />
-                    Log out
+                    로그아웃
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -450,5 +280,5 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
       </Sidebar>
       {children}
     </>
-  );
+  )
 }

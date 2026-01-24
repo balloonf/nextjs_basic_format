@@ -33,7 +33,7 @@ export const AuroraBackground = ({
               backgroundPosition: '50% 50%, 50% 50%',
               filter: 'blur(10px) invert(1)',
               maskImage: showRadialGradient ? 'radial-gradient(ellipse at 100% 0%, black 10%, var(--transparent) 70%)' : 'none'
-            }}
+            } as React.CSSProperties}
             className={cn(
               "pointer-events-none absolute -inset-[10px] opacity-50 will-change-transform dark:invert-0 before:absolute before:inset-0 before:bg-[image:var(--white-gradient),var(--aurora)] before:bg-[size:200%,100%] before:bg-[attachment:fixed] before:mix-blend-difference before:animate-aurora before:content-[''] dark:before:bg-[image:var(--dark-gradient),var(--aurora)]"
             )}

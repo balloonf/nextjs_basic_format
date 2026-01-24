@@ -136,7 +136,7 @@ export function useSidebarResize({
       }
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
+    const handleMouseUp = () => {
       if (!isInteractingWithRail.current) return;
 
       if (!isDragging.current) {

@@ -10,73 +10,70 @@ import { useAuth } from "@/components/providers/context/auth-context"
 import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { loginSchema, type LoginFormValues } from "@/lib/validations/auth"
+import { signupSchema, type SignupFormValues } from "@/lib/validations/auth"
 import { auth } from "@/lib/auth"
-import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
-import { AlertCircle } from "lucide-react"
+import { useState } from "react"
+import { AlertCircle, CheckCircle2 } from "lucide-react"
 
-export function LoginForm({
+export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { signIn, loading } = useAuth()
-  const searchParams = useSearchParams()
+  const { signUp, loading } = useAuth()
   const [socialLoading, setSocialLoading] = useState<string | null>(null)
   const [formError, setFormError] = useState<string | null>(null)
-
-  // URL에서 OAuth 에러 처리
-  useEffect(() => {
-    const error = searchParams.get('error')
-    if (error) {
-      const errorMessages: Record<string, string> = {
-        'auth_callback_error': '소셜 로그인 처리 중 오류가 발생했습니다.',
-        'no_code': '인증 코드가 없습니다. 다시 시도해주세요.',
-        'access_denied': '로그인이 취소되었습니다.',
-      }
-      const errorMessage = errorMessages[error] || decodeURIComponent(error)
-      setFormError(errorMessage)
-      toast.error(errorMessage)
-      // URL에서 에러 파라미터 제거
-      window.history.replaceState({}, '', '/login')
-    }
-  }, [searchParams])
+  const [formSuccess, setFormSuccess] = useState<string | null>(null)
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
+      fullName: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   })
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: SignupFormValues) => {
     setFormError(null)
-    const { error } = await signIn(data.email, data.password)
+    setFormSuccess(null)
+
+    const { error, needsEmailConfirmation, isExistingUser } = await signUp(data.email, data.password, {
+      full_name: data.fullName,
+    })
 
     if (error) {
-      // 이메일 미확인 에러인 경우
-      if (error.message.includes('이메일 인증') || error.message.includes('Email not confirmed')) {
-        const errorMessage = "이메일 인증이 완료되지 않았습니다. 이메일을 확인해주세요."
-        setFormError(errorMessage)
-        toast.error(errorMessage, { duration: 5000 })
+      if (isExistingUser) {
+        setFormError("이미 가입된 이메일입니다. 로그인해주세요.")
+        toast.error("이미 가입된 이메일입니다. 로그인해주세요.", {
+          action: {
+            label: "로그인하기",
+            onClick: () => window.location.href = "/login"
+          }
+        })
       } else {
-        const errorMessage = error.message || "로그인에 실패했습니다."
-        setFormError(errorMessage)
-        toast.error(errorMessage)
+        setFormError(error.message || "회원가입에 실패했습니다.")
+        toast.error(error.message || "회원가입에 실패했습니다.")
       }
+    } else if (needsEmailConfirmation) {
+      setFormSuccess("회원가입이 완료되었습니다! 이메일을 확인하여 인증을 완료해주세요.")
+      toast.success("회원가입이 완료되었습니다! 이메일을 확인하여 인증을 완료해주세요.", {
+        duration: 5000
+      })
     } else {
-      toast.success("로그인되었습니다!")
+      setFormSuccess("회원가입이 완료되었습니다!")
+      toast.success("회원가입이 완료되었습니다!")
     }
   }
 
   const handleSocialLogin = async (provider: 'google' | 'kakao') => {
     try {
       setFormError(null)
+      setFormSuccess(null)
       setSocialLoading(provider)
       const { error } = await auth.signInWithSocial(provider)
       if (error) {
@@ -86,6 +83,7 @@ export function LoginForm({
         toast.error(errorMessage)
         setSocialLoading(null)
       }
+      // 성공 시 리다이렉트되므로 setSocialLoading(null)은 호출되지 않음
     } catch (err) {
       console.error('Social login exception:', err)
       const errorMessage = "소셜 로그인 중 오류가 발생했습니다."
@@ -102,9 +100,9 @@ export function LoginForm({
           <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">다시 오신 것을 환영합니다</h1>
+                <h1 className="text-2xl font-bold">계정을 만들어보세요</h1>
                 <p className="text-muted-foreground text-balance">
-                  계정에 로그인하세요
+                  새 계정을 생성하여 시작하세요
                 </p>
               </div>
               {formError && (
@@ -113,6 +111,21 @@ export function LoginForm({
                   <AlertDescription>{formError}</AlertDescription>
                 </Alert>
               )}
+              {formSuccess && (
+                <Alert className="border-green-500 text-green-700 dark:text-green-400">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <AlertDescription>{formSuccess}</AlertDescription>
+                </Alert>
+              )}
+              <div className="grid gap-3">
+                <Label htmlFor="fullName">이름 (선택사항)</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder="홍길동"
+                  {...register("fullName")}
+                />
+              </div>
               <div className="grid gap-3">
                 <Label htmlFor="email">이메일</Label>
                 <Input
@@ -127,18 +140,11 @@ export function LoginForm({
                 )}
               </div>
               <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">비밀번호</Label>
-                  <a
-                    href="/forgot"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                  >
-                    비밀번호를 잊으셨나요?
-                  </a>
-                </div>
+                <Label htmlFor="password">비밀번호</Label>
                 <Input
                   id="password"
                   type="password"
+                  placeholder="영문, 숫자 포함 8자 이상"
                   {...register("password")}
                   aria-invalid={errors.password ? "true" : "false"}
                 />
@@ -146,8 +152,21 @@ export function LoginForm({
                   <p className="text-sm text-destructive">{errors.password.message}</p>
                 )}
               </div>
+              <div className="grid gap-3">
+                <Label htmlFor="confirmPassword">비밀번호 확인</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="비밀번호를 다시 입력하세요"
+                  {...register("confirmPassword")}
+                  aria-invalid={errors.confirmPassword ? "true" : "false"}
+                />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
+                )}
+              </div>
               <Button type="submit" className="w-full" disabled={loading || isSubmitting}>
-                {loading || isSubmitting ? "로그인 중..." : "로그인"}
+                {loading || isSubmitting ? "회원가입 중..." : "회원가입"}
               </Button>
               <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                 <span className="bg-card text-muted-foreground relative z-10 px-2">
@@ -172,7 +191,7 @@ export function LoginForm({
                       />
                     </svg>
                   )}
-                  <span className="sr-only">카카오로 로그인</span>
+                  <span className="sr-only">카카오로 가입</span>
                 </Button>
                 <Button
                   variant="outline"
@@ -191,13 +210,13 @@ export function LoginForm({
                       />
                     </svg>
                   )}
-                  <span className="sr-only">Google로 로그인</span>
+                  <span className="sr-only">Google로 가입</span>
                 </Button>
               </div>
               <div className="text-center text-sm">
-                계정이 없으신가요?{" "}
-                <a href="/signup" className="underline underline-offset-4">
-                  회원가입
+                이미 계정이 있으신가요?{" "}
+                <a href="/login" className="underline underline-offset-4">
+                  로그인
                 </a>
               </div>
             </div>
